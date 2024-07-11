@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  postgres_local:
+    container_name: postgresql_db
+    image: postgres
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - ./:/var/lib/postgresql/data
+    restart: always
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    env_file:
+      - .env
+    depends_on:
+      - postgres_local
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
+      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'  # disable saving logs
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
+    env_file:
+      - .env
+
+
+
