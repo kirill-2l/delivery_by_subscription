@@ -36,6 +36,6 @@ lerna-debug.log*
 
 pgdata
 
-.env
+.env.development.local
 .env.local
 .env.staging

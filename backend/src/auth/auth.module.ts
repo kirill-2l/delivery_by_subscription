@@ -1,13 +1,12 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { Module } from "@nestjs/common";
+import { JwtModule, JwtService } from "@nestjs/jwt";
+import { APP_GUARD } from "@nestjs/core";
 
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
-import { AuthGuard } from './auth.guard';
-import { PrismaModule } from '../prisma/prisma.module';
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { UserModule } from "../user/user.module";
+import { AuthGuard } from "./auth.guard";
+import { JwtStrategy } from "./strategies";
 
 @Module({
   controllers: [AuthController],
@@ -17,15 +16,14 @@ import { PrismaModule } from '../prisma/prisma.module';
       useClass: AuthGuard,
     },
     AuthService,
+    JwtStrategy,
   ],
   imports: [
-    ConfigModule.forRoot(),
-    UsersModule,
-    PrismaModule,
+    UserModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: "1d" },
     }),
   ],
   exports: [AuthService],

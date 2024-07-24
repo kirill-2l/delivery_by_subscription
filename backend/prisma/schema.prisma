@@ -13,32 +13,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId String  @unique
-}
 
 model User {
   id          String   @id @default(cuid())
   email       String   @unique
   name        String?
-  profile     Profile?
-  password    String
+  hash    String
   phoneNumber String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   lastLoginAt DateTime @default(now())
-  active      Boolean
+  active      Boolean @default(true)
   locale      String?
-  Orders      Orders?
-}
 
-model Orders {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  products Product[]
+
+  @@map("users")
 }
 
 model Product {
@@ -48,4 +38,7 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   active    Boolean
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("products")
 }

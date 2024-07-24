@@ -29,5 +29,8 @@
     "typescript": "^5.2.2",
     "vite": "^5.3.1",
     "vue-tsc": "^2.0.21"
+  },
+  "installConfig": {
+    "pnp": true
   }
 }
