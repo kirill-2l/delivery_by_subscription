@@ -36,6 +36,8 @@ export class AuthService {
       throw new UnauthorizedException("Incorrect password");
     }
 
+    delete user.hash;
+
     return user;
   }
 
@@ -43,7 +45,6 @@ export class AuthService {
     const user = await this.usersService.findByEmail(dto.email);
 
     if (!user) throw new ForbiddenException("Credentials are incorrect");
-    console.log(dto.password, user.hash);
     const match = await bcrypt.compare(dto.password, user.hash);
 
     if (!match) throw new ForbiddenException("Credentials are incorrect");
