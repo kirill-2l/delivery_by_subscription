@@ -1,1 +1,1 @@
-export { JwtStrategy } from "./jwt.strategy";
+export { AtStrategy } from "./at.strategy";

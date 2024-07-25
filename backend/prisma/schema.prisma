@@ -25,7 +25,7 @@ model User {
   lastLoginAt DateTime @default(now())
   active      Boolean @default(true)
   locale      String?
-
+  hashedRt String?
   products Product[]
 
   @@map("users")

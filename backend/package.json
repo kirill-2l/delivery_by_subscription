@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:dev:migrate": "dotenv -e .env.development.local -- npx prisma migrate dev",
     "prisma:dev:studio": "dotenv -e .env.development.local -- npx prisma studio",
     "prisma:dev:deploy": "dotenv -e .env.development.local -- npx prisma migrate deploy",
     "db:dev:rm": "docker compose rm postgres_local_dev -s -f -v",
