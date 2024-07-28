@@ -25,8 +25,10 @@ model User {
   lastLoginAt DateTime @default(now())
   active      Boolean @default(true)
   locale      String?
+  role UserRole @default(USER)
   hashedRt String?
   products Product[]
+  categories Category[]
 
   @@map("users")
 }
@@ -40,5 +42,33 @@ model Product {
   active    Boolean
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id])
+  extraProducts ExtraProduct[]
+  categoryId Int
   @@map("products")
+}
+
+model ExtraProduct {
+  id Int @id @default(autoincrement())
+  price Int
+  name String
+  products Product[]
+
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  name String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  products Product[]
+  @@map("categories")
+}
+
+enum UserRole {
+  USER
+  MANAGER
+  ADMIN
 }
