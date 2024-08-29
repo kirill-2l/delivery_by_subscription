@@ -23,8 +23,6 @@ services:
       - "5435:5432"
     expose:
       - "5432"
-    env_file:
-      - .env.test.local
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
