@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:seed": "npx prisma db push --force-reset && npx prisma db seed",
     "prisma:dev:migrate": "npx prisma migrate dev",
     "prisma:dev:studio": "npx prisma studio",
     "prisma:dev:deploy": "npx prisma migrate deploy",
@@ -29,6 +30,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:e2e": "yarn db:test:restart",
     "test:e2e": "jest --watch --no-cache --config ./test/jest-e2e.json"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
