@@ -1,13 +1,18 @@
-import { Dialog, DialogContent } from '@/shared/components/ui';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/shared/components/ui';
 import { useState } from 'react';
 import { LoginForm } from '@/shared/components/shared/modals/auth-modal/forms/login-form';
 import Link from 'next/link';
 import { AuthModalLoginHeader } from '@/shared/components/shared/modals/auth-modal/auth-modal-login-header';
 
 interface Props {
-  open: boolean,
-  onClose: () => void,
-};
+  open: boolean;
+  onClose: () => void;
+}
 
 export const AuthModal = (props: Props) => {
   const { open, onClose } = props;
@@ -16,23 +21,23 @@ export const AuthModal = (props: Props) => {
     onClose();
   };
   return (
-    <Dialog
-      open={open}
-      onOpenChange={handleClose}
-    >
-      <DialogContent className="w-[450px]">
-        {
-          type === 'login' ?
-            <>
-              <AuthModalLoginHeader />
-              <LoginForm onSubmit={handleClose} />
-            </>
-            : <LoginForm onSubmit={handleClose} />
-        }
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className='w-[450px]'>
+        {type === 'login' ? (
+          <>
+            <DialogTitle>Login</DialogTitle>
+            <DialogDescription>
+              Enter your email below to login to your account{' '}
+            </DialogDescription>
+            <LoginForm onClose={handleClose} />
+          </>
+        ) : (
+          <LoginForm onClose={handleClose} />
+        )}
 
-        <div className="text-center text-sm">
+        <div className='text-center text-sm'>
           Don&apos;t have an account?{' '}
-          <Link href="#" className="underline">
+          <Link href='#' className='underline'>
             Sign up
           </Link>
         </div>
@@ -41,8 +46,6 @@ export const AuthModal = (props: Props) => {
         {/*  Login with Google*/}
         {/*</Button>*/}
       </DialogContent>
-
-
     </Dialog>
   );
 };
