@@ -17,8 +17,8 @@ export class AtStrategy extends PassportStrategy(Strategy, "jwt") {
   }
 
   async validate({ sub }: { sub: string }) {
-    const user = await this.userService.findById(sub);
-    delete user.hash;
-    return user;
+    const { hash, hashedRt, active, createdAt, updatedAt, lastLoginAt, ...rest } = await this.userService.findById(sub);
+
+    return rest;
   }
 }

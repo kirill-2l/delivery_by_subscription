@@ -18,6 +18,8 @@ export interface SignInResponse {
   user: User;
 }
 
+const AT_EXPIRE_TIME = 15 * 60 * 1000;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -29,7 +31,6 @@ export class AuthService {
 
   async signin(dto: SigninDto) {
     const user = await this.usersService.findByEmail(dto.email);
-
     if (!user) throw new ForbiddenException("Credentials are incorrect");
 
     const match = await bcrypt.compare(dto.password, user.hash);
@@ -41,7 +42,7 @@ export class AuthService {
 
     await this.updateRtHash(user.id, tokens.refresh_token);
 
-    return tokens;
+    return { ...tokens, expires_in: new Date().setTime(new Date().getTime() + AT_EXPIRE_TIME) };
   }
 
   async signup(dto: SignupDto) {

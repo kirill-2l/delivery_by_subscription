@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { Prisma } from "@prisma/client";
-import { SignupDto } from "../auth/dto/signup.dto";
 import { EditUserDto } from "./dto";
 
 // This should be a real class/interface representing a user entity
@@ -10,11 +9,6 @@ export type User = any;
 @Injectable()
 export class UserService {
   constructor(private _prisma: PrismaService) {}
-  async user(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
-    return this._prisma.user.findUnique({
-      where: userWhereUniqueInput,
-    });
-  }
 
   async editUser(userId: string, dto: EditUserDto) {
     const user = await this._prisma.user.update({
