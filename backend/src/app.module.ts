@@ -9,6 +9,7 @@ import { AtGuard } from "./auth/guards";
 import { APP_GUARD } from "@nestjs/core";
 import { AppLoggerMiddleware } from "./common/middleware/logger.middleware";
 import { ProductModule } from './product/product.module';
+import { StoreModule } from './store/store.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ProductModule } from './product/product.module';
     AuthModule,
     UserModule,
     ProductModule,
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [
