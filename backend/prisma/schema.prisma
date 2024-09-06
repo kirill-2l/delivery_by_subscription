@@ -4,8 +4,11 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// Visualize your schema  https://prismaliser.app/
+
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -13,58 +16,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id          String   @id @default(cuid())
+  id          Int      @id @unique @default(autoincrement())
   email       String   @unique
   name        String?
-  hash    String
+  hash        String
   phoneNumber String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   lastLoginAt DateTime @default(now())
-  active      Boolean @default(true)
+  active      Boolean  @default(true)
   locale      String?
-  role UserRole @default(USER)
-  hashedRt String?
-  products Product[]
-  categories Category[]
+  role        UserRole @default(USER)
+  hashedRt    String?
+  store       Store?
+  // categories  Category[]
 
   @@map("users")
 }
 
 model Product {
-  id        String   @id @default(cuid())
-  name      String?
-  price     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  active    Boolean
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category Category @relation(fields: [categoryId], references: [id])
-  extraProducts ExtraProduct[]
-  categoryId Int
+  id          Int         @id @default(autoincrement())
+  name        String?
+  price       Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  active      Boolean     @default(true)
+  productType ProductType @default(REGULAR)
+  store       Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId     Int
+  // category    Category?   @relation(fields: [categoryId], references: [id])
+  // categoryId  Int
+
   @@map("products")
 }
 
-model ExtraProduct {
-  id Int @id @default(autoincrement())
-  price Int
-  name String
-  products Product[]
-
+model Store {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  active    Boolean   @default(true)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int       @unique
+  products  Product[]
 }
 
 model Category {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  products Product[]
+  userId    Int
+  // products  Product[]
+
   @@map("categories")
+}
+
+enum ProductType {
+  REGULAR
+  EXTRA
 }
 
 enum UserRole {

@@ -8,6 +8,8 @@ import { ConfigModule } from "@nestjs/config";
 import { AtGuard } from "./auth/guards";
 import { APP_GUARD } from "@nestjs/core";
 import { AppLoggerMiddleware } from "./common/middleware/logger.middleware";
+import { ProductModule } from './product/product.module';
+import { StoreModule } from './store/store.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { AppLoggerMiddleware } from "./common/middleware/logger.middleware";
     PrismaModule,
     AuthModule,
     UserModule,
+    ProductModule,
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [

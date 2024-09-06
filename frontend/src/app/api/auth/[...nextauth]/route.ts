@@ -14,13 +14,14 @@ export const authOptions: AuthOptions = {
         password: { type: 'password' },
       },
       async authorize(credentials, req) {
+        console.log('authorize');
         try {
           if (!credentials?.email || !credentials?.password) return null;
           const tokens = await Api.auth.signin(credentials);
           const user = await Api.auth.me(tokens.access_token);
           return { tokens, user, id: user.id };
         } catch (err) {
-          console.log(err);
+          // console.error('Error [JWT authorize]', err);
           return null;
         }
       },
@@ -36,11 +37,21 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) return { ...token, ...user };
-      if (new Date().getTime() < token.tokens.expires_in) return token;
-      return await Api.auth.refresh();
+      console.log('jwt');
+
+      try {
+        if (user) return { ...token, ...user };
+        if (new Date().getTime() < token.tokens.expires_in) return token;
+        return await Api.auth.refresh();
+      } catch (err) {
+        // console.error('Error [JWT CALLBACK]', err);
+        return null;
+      }
     },
     session({ token, session }) {
+      console.log('session', session);
+
+      if (!token) return session;
       const { tokens, user } = token;
       session.user = user;
       session.tokens = tokens;
@@ -48,8 +59,8 @@ export const authOptions: AuthOptions = {
     },
   },
   events: {
-    async signOut(message) {
-      const res = await Api.auth.logout();
+    async signOut() {
+      await Api.auth.logout();
     },
   },
 };

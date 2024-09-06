@@ -2,11 +2,12 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { User, UserService } from "../user/user.service";
+import { UserService } from "../user/user.service";
 import { SigninDto, SignupDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { ConfigService } from "@nestjs/config";
 import { Tokens } from "./types";
+import { User } from "@prisma/client";
 
 export interface TokenResponse {
   refreshToken?: string;
@@ -67,7 +68,7 @@ export class AuthService {
     }
   }
 
-  async updateRtHash(userId: string, rt: string) {
+  async updateRtHash(userId: number, rt: string) {
     const hash = await this.hashData(rt);
     await this.prisma.user.update({
       where: {
@@ -79,7 +80,7 @@ export class AuthService {
     });
   }
 
-  async logout(userId: string) {
+  async logout(userId: number) {
     await this.prisma.user.updateMany({
       where: {
         id: userId,
@@ -94,7 +95,7 @@ export class AuthService {
     return true;
   }
 
-  async refreshToken(userId: string, rt: string) {
+  async refreshToken(userId: number, rt: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -114,7 +115,7 @@ export class AuthService {
     return tokens;
   }
 
-  async signToken(userId: string, email: string): Promise<Tokens> {
+  async signToken(userId: number, email: string): Promise<Tokens> {
     const payload = {
       sub: userId,
       email,

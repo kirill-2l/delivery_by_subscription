@@ -28,13 +28,13 @@ export class AuthController {
   @UseGuards(RtGuard)
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@GetUserId() userId: string, @GetUser("refreshToken") refreshToken: string) {
+  async refreshToken(@GetUserId() userId: number, @GetUser("refreshToken") refreshToken: string) {
     return this.authService.refreshToken(userId, refreshToken);
   }
 
   @Post("logout")
   @HttpCode(HttpStatus.OK)
-  async logout(@GetUserId() userId: string) {
+  async logout(@GetUserId() userId: number) {
     return this.authService.logout(userId);
   }
 

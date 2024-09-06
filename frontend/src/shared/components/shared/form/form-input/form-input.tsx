@@ -1,6 +1,5 @@
 'use client';
 
-
 import { useFormContext } from 'react-hook-form';
 import { Input, Label } from '@/shared/components/ui';
 import { ErrorText } from '@/shared/components/shared/error-text';
@@ -27,21 +26,17 @@ export const FormInput = (props: Props) => {
 
   const errorsText = errors[name]?.message?.toString();
 
-
   return (
     <div className={className}>
-      {label &&
-        <div className="flex items-center">
+      {label && (
+        <div className='flex items-center'>
           <Label htmlFor={name}>{label}</Label>
           {labelSlot && labelSlot}
         </div>
-      }
+      )}
 
-      <Input id={name}  {...register(name)} />
-      {
-        errorsText && <ErrorText text={errorsText} />
-      }
+      <Input id={name} {...register(name)} {...rest} />
+      {errorsText && <ErrorText text={errorsText} />}
     </div>
-  )
-    ;
+  );
 };
