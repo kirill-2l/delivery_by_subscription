@@ -42,7 +42,7 @@ export const authOptions: AuthOptions = {
       try {
         if (user) return { ...token, ...user };
         if (new Date().getTime() < token.tokens.expires_in) return token;
-        return await Api.auth.refresh();
+        return await Api.auth.refresh(token.tokens.refresh_token);
       } catch (err) {
         // console.error('Error [JWT CALLBACK]', err);
         return null;
@@ -59,8 +59,9 @@ export const authOptions: AuthOptions = {
     },
   },
   events: {
-    async signOut() {
-      await Api.auth.logout();
+    async signOut({ session, token }) {
+      console.log('signOut', session, token);
+      await Api.auth.logout(token.tokens?.access_token || '');
     },
   },
 };

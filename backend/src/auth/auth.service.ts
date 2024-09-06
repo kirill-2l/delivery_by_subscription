@@ -112,7 +112,7 @@ export class AuthService {
 
     await this.updateRtHash(user.id, tokens.refresh_token);
 
-    return tokens;
+    return { ...tokens, expires_in: new Date().setTime(new Date().getTime() + AT_EXPIRE_TIME) };
   }
 
   async signToken(userId: number, email: string): Promise<Tokens> {

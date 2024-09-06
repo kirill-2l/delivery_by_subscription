@@ -2,14 +2,14 @@
 
 import { Container } from '@/shared/components/shared';
 import { ProductCard } from '@/shared/components/shared/product-card';
-import { useProducts } from '@/shared/hooks';
+import { useStores } from '@/shared/hooks/stores';
 
 export default function HomePage() {
-  const { data: products, isLoading } = useProducts();
+  const { data: stores, isLoading } = useStores();
   return (
     <Container className={'grid grid-cols-3 gap-4 py-4'}>
-      {products?.map((product) => (
-        <ProductCard key={product.id} title={product.name}></ProductCard>
+      {stores?.map((stores) => (
+        <ProductCard key={stores.id} title={stores.name}></ProductCard>
       ))}
     </Container>
   );

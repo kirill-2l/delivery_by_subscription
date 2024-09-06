@@ -35,24 +35,26 @@ async function up() {
   ];
 
   const products = new ProductSeed();
-  const stores = new StoreSeed();
+  const stores = new StoreSeed(50);
 
   for (const user of users) {
     await prisma.user.create({
       data: user,
     });
   }
-  await prisma.store.create({
-    // @ts-expect-error test
-    data: {
-      ...stores.data[0],
-      user: {
-        connect: {
-          email: "manager@manager.com",
-        },
+  for (const store of stores.data) {
+    await prisma.store.create({
+      // @ts-expect-error test
+      data: {
+        ...store,
+        // user: {
+        //   connect: {
+        //     email: "manager@manager.com",
+        //   },
+        // },
       },
-    },
-  });
+    });
+  }
 
   for (const product of products.data) {
     await prisma.product.create({
