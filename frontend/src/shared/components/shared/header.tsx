@@ -10,6 +10,8 @@ import { Button } from '@/shared/components/ui';
 import { AuthModal } from '@/shared/components/shared/modals';
 import { useSession } from 'next-auth/react';
 import { UserProfile } from '@/shared/components/shared';
+import { Logo } from '@/shared/components/shared/logo';
+import { AppRoutes } from '@/shared/constants';
 
 interface Props {
   hasSearch?: boolean;
@@ -28,12 +30,8 @@ export const Header: FC<Props> = ({
   return (
     <header className={cn('border-b', className)}>
       <Container className='flex items-center justify-between py-8'>
-        <Link href='/'>
-          <div className='flex items-center gap-4'>
-            <div>
-              <h1 className='text-2xl font-black uppercase'>Delivery</h1>
-            </div>
-          </div>
+        <Link href={AppRoutes.home}>
+          <Logo />
         </Link>
 
         <AuthModal
