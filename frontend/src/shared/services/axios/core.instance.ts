@@ -5,6 +5,9 @@ import { getSession } from 'next-auth/react';
 
 export const axiosCoreInstance = axios.create({
   baseURL: process.env.REACT_APP_SERVICE_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 let lastSession: Session | null = null;

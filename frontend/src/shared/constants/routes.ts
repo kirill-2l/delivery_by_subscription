@@ -1,7 +1,7 @@
 export const AppRoutes = {
   home: '/',
-  products: '/products',
+  stores: '/stores',
 } as const;
 
-export const getRouteProductDetail = (productId: number) =>
-  `${AppRoutes.products}/${productId}`;
+export const getStoreDetailRoute = (storeId: number) =>
+  `${AppRoutes.stores}/${storeId}`;

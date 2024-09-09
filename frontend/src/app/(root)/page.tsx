@@ -1,20 +1,23 @@
-'use client';
-
 import { Container } from '@/shared/components/shared';
-import { useStores } from '@/shared/hooks/stores';
-import { StoreCard } from '@/shared/components/shared/store-card';
-import Link from 'next/link';
-import { getRouteProductDetail } from '@/shared/constants';
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
+import { FeaturedStores } from '@/shared/components/shared/featured-stores';
+import { allStoresOptions } from '@/shared/hooks/stores';
 
-export default function HomePage() {
-  const { data: stores } = useStores();
+export default function HomePage({ params }: { params: any }) {
+  const queryClient = new QueryClient();
+
+  void queryClient.prefetchQuery(allStoresOptions);
+  console.log(params, 'params');
+
   return (
-    <Container className={'grid grid-cols-5 gap-4 py-4'}>
-      {stores?.map((store) => (
-        <Link key={store.id} href={getRouteProductDetail(store.id)}>
-          <StoreCard {...store} imgHeight={150}></StoreCard>
-        </Link>
-      ))}
-    </Container>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Container className={'grid grid-cols-5 gap-4 py-4'}>
+        <FeaturedStores />
+      </Container>
+    </HydrationBoundary>
   );
 }

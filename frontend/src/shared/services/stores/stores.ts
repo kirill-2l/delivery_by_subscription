@@ -19,6 +19,12 @@ export interface Store {
   averageRating?: number;
 }
 
+const ENDPOINT = 'stores';
+
 export const getAll = async () => {
-  return (await axiosCoreInstance.get<Store[]>('/stores')).data;
+  return (await axiosCoreInstance.get<Store[]>(`${ENDPOINT}`)).data;
+};
+
+export const getOne = async (id: number) => {
+  return (await axiosCoreInstance.get<Store>(`${ENDPOINT}/${id}`)).data;
 };

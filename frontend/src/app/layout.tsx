@@ -17,23 +17,20 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-                                     children,
-                                   }: Readonly<{
+  children,
+}: Readonly<{
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
-    <body className={cn(
-      'min-h-screen bg-background font-roboto antialiased',
-      roboto.variable,
-    )}
-    >
-
-    <Providers>
-      {children}
-    </Providers>
-
-    </body>
+    <html lang='en'>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-roboto antialiased',
+          roboto.variable
+        )}
+      >
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

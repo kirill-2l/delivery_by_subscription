@@ -1,12 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Api } from '@/shared/services/api-client';
 
-const useStores = () => {
+import { queryOptions } from '@tanstack/react-query';
+
+export const allStoresOptions = queryOptions({
+  queryKey: ['stores'],
+  queryFn: () => Api.stores.getAll(),
+});
+
+export const useStore = (id: number) => {
   return useQuery({
-    queryKey: ['stores'],
-    queryFn: () => Api.stores.getAll(),
-    placeholderData: [],
+    queryKey: ['storeDetail'],
+    queryFn: () => Api.stores.getOne(id),
   });
 };
-
-export { useStores };
