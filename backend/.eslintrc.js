@@ -22,6 +22,7 @@ module.exports = {
       "error",
       {
         ignoreRestSiblings: true,
+        varsIgnorePattern: "^_",
       },
     ],
     "import/no-cycle": 2,
