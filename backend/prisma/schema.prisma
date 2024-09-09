@@ -35,42 +35,47 @@ model User {
   @@map("users")
 }
 
+model Store {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  active    Boolean   @default(true)
+  products  Product[]
+}
+
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          Int                    @id @default(autoincrement())
   name        String?
   price       Int
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  active      Boolean     @default(true)
-  productType ProductType @default(REGULAR)
-  store       Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  active      Boolean                @default(true)
+  productType ProductType            @default(REGULAR)
+  store       Store                  @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId     Int
-  // category    Category?   @relation(fields: [categoryId], references: [id])
-  // categoryId  Int
+  categories  CategoriesOnProducts[]
 
   @@map("products")
 }
 
-model Store {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  active    Boolean   @default(true)
-  // user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // userId    Int       @unique
-  products  Product[]
+model Category {
+  id       Int                    @id @default(autoincrement())
+  name     String                 @unique
+  products CategoriesOnProducts[]
 }
 
-model Category {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    Int
-  // products  Product[]
+model CategoriesOnProducts {
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId  Int
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+  assignedAt DateTime  @default(now())
 
-  @@map("categories")
+  @@id([productId, categoryId])
+  @@map("productCategories")
 }
 
 enum ProductType {
