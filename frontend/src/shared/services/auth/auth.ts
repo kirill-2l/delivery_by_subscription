@@ -1,4 +1,5 @@
-import { axiosCoreInstance } from '@/shared/services/axios';
+import axios from 'axios';
+import { apiBaseUrl } from 'next-auth/client/_utils';
 
 export interface UserCredentials {
   email: string;
@@ -25,25 +26,49 @@ export interface Tokens {
   expires_in: number;
 }
 
+const axiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_SERVICE_BASE_URL,
+});
+
 export const signin = async (payload: UserCredentials): Promise<Tokens> => {
-  return (await axiosCoreInstance.post('/auth/signin', payload)).data;
+  return (await axiosInstance.post('/auth/signin', payload)).data;
 };
 
 export const signup = async (payload: UserCredentials) => {
-  return (await axiosCoreInstance.post('/auth/signup', payload)).data;
+  return (await axiosInstance.post('/auth/signup', payload)).data;
 };
 
-export const refresh = async () => {
-  return (await axiosCoreInstance.post('/auth/refresh')).data;
+export const refresh = async (accessToken: string) => {
+  return (
+    await axios.post(
+      '/auth/refresh',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+  ).data;
 };
 
-export const logout = async () => {
-  return (await axiosCoreInstance.post('/auth/logout')).data;
+export const logout = async (accessToken: string) => {
+  return (
+    await axiosInstance.post(
+      '/auth/logout',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+  ).data;
 };
 
 export const me = async (accessToken: string): Promise<User> => {
   return (
-    await axiosCoreInstance.get('/users/me', {
+    await axiosInstance.get('/users/me', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

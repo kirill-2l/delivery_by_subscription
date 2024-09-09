@@ -1,7 +1,6 @@
 import { hashSync } from "bcrypt";
 import { PrismaClient, UserRole } from "@prisma/client";
-import { ProductSeed } from "./data/product-seed";
-import { StoreSeed } from "./data/store-seed";
+import { faker } from "@faker-js/faker";
 
 const prisma = new PrismaClient();
 
@@ -12,6 +11,8 @@ async function up() {
   console.log("Deleted stores in users table");
   await prisma.product.deleteMany();
   console.log("Deleted products in users table");
+  await prisma.category.deleteMany();
+  console.log("Deleted categories in users table");
 
   const users = [
     {
@@ -34,38 +35,72 @@ async function up() {
     },
   ];
 
-  const products = new ProductSeed();
-  const stores = new StoreSeed();
-
   for (const user of users) {
     await prisma.user.create({
       data: user,
     });
   }
-  await prisma.store.create({
-    // @ts-expect-error test
-    data: {
-      ...stores.data[0],
-      user: {
-        connect: {
-          email: "manager@manager.com",
-        },
-      },
-    },
-  });
 
-  for (const product of products.data) {
-    await prisma.product.create({
-      // @ts-expect-error test
-      data: {
-        ...product,
-        store: {
-          connect: {
-            id: 1,
+  const categories = [];
+  const categoriesCount = 10;
+  const categoryNames = faker.helpers.uniqueArray(faker.commerce.department, categoriesCount);
+
+  for (const index of [...Array(categoriesCount)].keys()) {
+    categories.push(
+      await prisma.category.create({
+        data: {
+          name: categoryNames[index],
+        },
+      }),
+    );
+  }
+
+  const stores = [];
+  const storesCount = 50;
+  const storeNames = faker.helpers.uniqueArray(faker.company.name, storesCount);
+
+  for (const index of [...Array(storesCount)].keys()) {
+    stores.push(
+      await prisma.store.create({
+        data: {
+          name: storeNames[index],
+        },
+      }),
+    );
+  }
+
+  const products = [];
+  const productPerStore = 100;
+
+  for (const store of stores) {
+    for (const _ of [...Array(productPerStore)]) {
+      const product = await prisma.product.create({
+        data: {
+          name: faker.commerce.department(),
+          price: Number(faker.commerce.price({ dec: 0 })),
+          store: {
+            connect: {
+              id: store.id,
+            },
           },
         },
-      },
-    });
+      });
+      await prisma.categoriesOnProducts.create({
+        data: {
+          product: {
+            connect: {
+              id: product.id,
+            },
+          },
+          category: {
+            connect: {
+              id: Math.floor(Math.random() * (categoriesCount - 1) + 1),
+            },
+          },
+        },
+      });
+      products.push(product);
+    }
   }
 }
 

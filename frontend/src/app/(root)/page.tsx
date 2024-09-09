@@ -1,16 +1,23 @@
-'use client';
-
 import { Container } from '@/shared/components/shared';
-import { ProductCard } from '@/shared/components/shared/product-card';
-import { useProducts } from '@/shared/hooks';
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query';
+import { FeaturedStores } from '@/shared/components/shared/featured-stores';
+import { allStoresOptions } from '@/shared/hooks/stores';
 
-export default function HomePage() {
-  const { data: products, isLoading } = useProducts();
+export default function HomePage({ params }: { params: any }) {
+  const queryClient = new QueryClient();
+
+  void queryClient.prefetchQuery(allStoresOptions);
+  console.log(params, 'params');
+
   return (
-    <Container className={'grid grid-cols-3 gap-4 py-4'}>
-      {products?.map((product) => (
-        <ProductCard key={product.id} title={product.name}></ProductCard>
-      ))}
-    </Container>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Container className={'grid grid-cols-5 gap-4 py-4'}>
+        <FeaturedStores />
+      </Container>
+    </HydrationBoundary>
   );
 }

@@ -1,4 +1,4 @@
-import { Header } from '@/shared/components/shared/header';
+import { Footer, Header } from '@/shared/components/shared';
 import { ReactNode } from 'react';
 
 export default function HomeLayout({ children }: { children: ReactNode }) {
@@ -6,6 +6,7 @@ export default function HomeLayout({ children }: { children: ReactNode }) {
     <main>
       <Header />
       {children}
+      <Footer />
     </main>
   );
 }

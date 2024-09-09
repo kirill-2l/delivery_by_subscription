@@ -1,5 +1,3 @@
-'use client';
-
 import { useFormContext } from 'react-hook-form';
 import { Input, Label } from '@/shared/components/ui';
 import { ErrorText } from '@/shared/components/shared/error-text';
