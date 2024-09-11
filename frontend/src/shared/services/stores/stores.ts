@@ -1,6 +1,6 @@
 'use server';
 
-import { axiosCoreInstance } from '@/shared/services/axios';
+import { coreHttpClientInstance } from '../http-client';
 
 const OfferType = {
   freeDelivery: 'freeDelivery',
@@ -22,9 +22,9 @@ export interface Store {
 const ENDPOINT = 'stores';
 
 export const getAll = async () => {
-  return (await axiosCoreInstance.get<Store[]>(`${ENDPOINT}`)).data;
+  return (await coreHttpClientInstance.get<Store[]>(`${ENDPOINT}`)).json();
 };
 
 export const getOne = async (id: number) => {
-  return (await axiosCoreInstance.get<Store>(`${ENDPOINT}/${id}`)).data;
+  return (await coreHttpClientInstance.get<Store>(`${ENDPOINT}/${id}`)).json();
 };

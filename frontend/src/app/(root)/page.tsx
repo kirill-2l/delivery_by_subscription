@@ -7,11 +7,10 @@ import {
 import { FeaturedStores } from '@/shared/components/shared/featured-stores';
 import { allStoresOptions } from '@/shared/hooks/stores';
 
-export default function HomePage({ params }: { params: any }) {
+export default async function HomePage({ params }: { params: any }) {
   const queryClient = new QueryClient();
 
-  void queryClient.prefetchQuery(allStoresOptions);
-  console.log(params, 'params');
+  await queryClient.prefetchQuery(allStoresOptions);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

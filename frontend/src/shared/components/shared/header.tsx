@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/utils/class-name';
 import React, { FC, useState } from 'react';
 import { Container } from './container';
 import Link from 'next/link';

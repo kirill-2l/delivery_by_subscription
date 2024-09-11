@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Roboto as FontRoboto } from 'next/font/google';
 import './globals.css';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/utils/class-name';
 import { Providers } from '@/shared/providers';
 import { ReactNode } from 'react';
 

@@ -1,6 +1,9 @@
 import NextAuth, { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { Api } from '@/shared/services/api-client';
+import { logger } from '@/shared/utils';
+
+const IS_LOGGER_SILENT = false;
 
 export const authOptions: AuthOptions = {
   secret: process.env.AUTH_SECRET,
@@ -37,16 +40,16 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      console.log('jwt');
-
+      logger.info('jwt', { silent: IS_LOGGER_SILENT });
       try {
         if (user) return { ...token, ...user };
         if (new Date().getTime() < token.tokens.expires_in) return token;
-        console.log('refresh token');
         const refreshedTokens = await Api.auth.refresh(
           token.tokens.refresh_token
         );
-        console.log('refresh token', refreshedTokens);
+        logger.info(`refresh token ${refreshedTokens}`, {
+          silent: IS_LOGGER_SILENT,
+        });
         return refreshedTokens;
       } catch (err) {
         // console.error('Error [JWT CALLBACK]', err);
@@ -55,20 +58,22 @@ export const authOptions: AuthOptions = {
     },
 
     session({ token, session }) {
-      console.log('session', session);
-
+      logger.info(`refresh token ${session}`, {
+        silent: IS_LOGGER_SILENT,
+      });
       if (!token) return session;
       const { tokens, user } = token;
       session.user = user;
       session.tokens = tokens;
-      console.log(session);
       return session;
     },
   },
   debug: true,
   events: {
     async signOut({ session, token }) {
-      console.log('signOut', session, token);
+      logger.info(`signOut ${session} ${token}`, {
+        silent: IS_LOGGER_SILENT,
+      });
       await Api.auth.logout(token.tokens?.access_token || '');
     },
   },

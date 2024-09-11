@@ -1,6 +1,6 @@
 'use server';
 
-import { axiosCoreInstance } from '@/shared/services/axios';
+import { coreHttpClientInstance } from '../http-client';
 
 export interface Product {
   id: number;
@@ -9,5 +9,5 @@ export interface Product {
 }
 
 export const getAll = async () => {
-  return (await axiosCoreInstance.get<Product[]>('/products')).data;
+  return (await coreHttpClientInstance.get<Product[]>('/products')).data;
 };
