@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { apiBaseUrl } from 'next-auth/client/_utils';
+import ky from 'ky';
 
 export interface UserCredentials {
   email: string;
@@ -26,52 +25,44 @@ export interface Tokens {
   expires_in: number;
 }
 
-const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_SERVICE_BASE_URL,
+const authHttpClient = ky.create({
+  prefixUrl: process.env.REACT_APP_SERVICE_BASE_URL,
 });
 
 export const signin = async (payload: UserCredentials): Promise<Tokens> => {
-  return (await axiosInstance.post('/auth/signin', payload)).data;
+  return await authHttpClient.post('/auth/signin', { json: payload }).json();
 };
 
 export const signup = async (payload: UserCredentials) => {
-  return (await axiosInstance.post('/auth/signup', payload)).data;
+  return await authHttpClient.post('/auth/signup', { json: payload }).json();
 };
 
 export const refresh = async (accessToken: string) => {
-  return (
-    await axios.post(
-      '/auth/refresh',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
-  ).data;
-};
-
-export const logout = async (accessToken: string) => {
-  return (
-    await axiosInstance.post(
-      '/auth/logout',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
-  ).data;
-};
-
-export const me = async (accessToken: string): Promise<User> => {
-  return (
-    await axiosInstance.get('/users/me', {
+  return await authHttpClient
+    .post('/auth/refresh', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     })
-  ).data;
+    .json();
+};
+
+export const logout = async (accessToken: string) => {
+  return await authHttpClient
+    .post('/auth/logout', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .json();
+};
+
+export const me = async (accessToken: string): Promise<User> => {
+  return await authHttpClient
+    .get('/users/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .json();
 };
