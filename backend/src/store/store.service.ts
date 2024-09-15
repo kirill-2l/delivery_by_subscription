@@ -1,6 +1,6 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { Product } from "@prisma/client";
+import { Store } from "@prisma/client";
 
 export interface StoreProductCategoryItem {
   id: number;
@@ -15,7 +15,7 @@ export interface StoreProductCategory {
   items: StoreProductCategoryItem[];
 }
 
-export interface StoreWithProductCategories extends Pick<Product, "name" | "id"> {
+export interface StoreWithProductCategories extends Pick<Store, "name" | "id"> {
   categories: StoreProductCategory[];
 }
 
