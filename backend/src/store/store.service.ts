@@ -15,7 +15,7 @@ export interface StoreProductCategory {
   items: StoreProductCategoryItem[];
 }
 
-export interface StoreWithProductCategories extends Pick<Store, "name" | "id"> {
+export interface StoreWithProductCategories extends Pick<Store, "name" | "id" | "storeCoverImageSrc"> {
   categories: StoreProductCategory[];
 }
 
@@ -98,6 +98,7 @@ export class StoreService {
     const res = {
       name: store.name,
       id: store.id,
+      storeCoverImageSrc: store.storeCoverImageSrc,
       categories: adaptCategories(),
     } satisfies StoreWithProductCategories;
 
