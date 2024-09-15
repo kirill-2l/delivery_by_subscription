@@ -64,6 +64,10 @@ async function up() {
       await prisma.store.create({
         data: {
           name: storeNames[index],
+          storeCoverImageSrc: faker.image.urlPicsumPhotos({
+            width: 1200,
+            height: 300,
+          }),
         },
       }),
     );
@@ -78,6 +82,10 @@ async function up() {
         data: {
           name: faker.commerce.department(),
           price: Number(faker.commerce.price({ dec: 0 })),
+          productImageSrc: faker.image.urlPicsumPhotos({
+            width: 400,
+            height: 400,
+          }),
           store: {
             connect: {
               id: store.id,
@@ -85,7 +93,7 @@ async function up() {
           },
         },
       });
-      await prisma.categoriesOnProducts.create({
+      await prisma.categoryOnProducts.create({
         data: {
           product: {
             connect: {
