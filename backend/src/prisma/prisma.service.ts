@@ -25,9 +25,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // this.$on("query", async e => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // console.log(`${e.query} ${e.params}`);
+    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //   // @ts-ignore
+    //   console.log("Query: " + e.query);
+    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //   // @ts-ignore
+    //   console.log("Params: " + e.params);
+    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //   // @ts-ignore
+    //   console.log("Duration: " + e.duration + "ms");
     // });
   }
 }

@@ -28,6 +28,7 @@ export class StoreService {
 
   async getStore(id: number) {
     const store = await this.prismaService.store.findFirst({
+      relationLoadStrategy: "join",
       include: {
         products: {
           include: {
