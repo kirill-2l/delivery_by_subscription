@@ -4,8 +4,8 @@ import { StoreCategories } from '@/shared/components/shared/store-categories';
 
 export default function HomeLayout({ children }: { children: ReactNode }) {
   return (
-    <main className='min-h-screen'>
-      <Header />
+    <>
+      <Header className='sticky top-0' />
       <Container className='flex'>
         <aside>
           <StoreCategories></StoreCategories>
@@ -16,6 +16,6 @@ export default function HomeLayout({ children }: { children: ReactNode }) {
         </aside>
       </Container>
       <Footer />
-    </main>
+    </>
   );
 }

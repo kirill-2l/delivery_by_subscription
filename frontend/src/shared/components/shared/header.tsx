@@ -28,8 +28,8 @@ export const Header: FC<Props> = ({
   const { data: session } = useSession();
   const [openAuthModal, setOpenAuthModal] = useState(false);
   return (
-    <header className={cn('border-b', className)}>
-      <Container className='flex items-center justify-between py-8'>
+    <header className={cn('z-20 border-b bg-white', className)}>
+      <Container className='flex items-center justify-between py-4'>
         <Link href={AppRoutes.home}>
           <Logo />
         </Link>
