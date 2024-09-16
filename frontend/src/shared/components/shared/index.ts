@@ -6,3 +6,5 @@ export * from './error-text';
 export * from './rating';
 export * from './products-group-list';
 export * from './product-card';
+export * from './store-categories';
+export * from './cart-drawer';

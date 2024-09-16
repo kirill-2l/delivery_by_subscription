@@ -1,17 +1,30 @@
-import { Button } from '@/shared/components/ui';
+import { Button, Title } from '@/shared/components/ui';
+import Link from 'next/link';
 
-interface Props {
-  menuItems?: Record<string, string>[];
+interface MenuItem {
+  id: number;
+  name: string;
+  link: string;
 }
 
-export const StoreCategories = ({ menuItems }: Props) => {
+interface Props {
+  categories?: MenuItem[];
+}
+
+export const StoreCategories = ({ categories }: Props) => {
   return (
-    <div>
-      <h2 className='text-xl'>Menu</h2>
-      <ul>
-        {menuItems?.map((menuItem) => (
-          <li key={menuItem.name}>
-            <Button variant={'outline'}>{menuItem.name}</Button>
+    <div className='flex w-full flex-col'>
+      <Title size='md' className='mb-4' text='Menu' />
+      <ul className='flex flex-col gap-3'>
+        {categories?.map((category) => (
+          <li key={category.name}>
+            <Button
+              asChild
+              variant={'ghost'}
+              className={'w-full justify-start'}
+            >
+              <Link href={category.link}>{category.name}</Link>
+            </Button>
           </li>
         ))}
       </ul>
