@@ -64,6 +64,10 @@ async function up() {
       await prisma.store.create({
         data: {
           name: storeNames[index],
+          storeCoverImageSrc: faker.image.urlPicsumPhotos({
+            width: 1200,
+            height: 300,
+          }),
         },
       }),
     );
@@ -74,32 +78,41 @@ async function up() {
 
   for (const store of stores) {
     for (const _ of [...Array(productPerStore)]) {
-      const product = await prisma.product.create({
-        data: {
-          name: faker.commerce.department(),
-          price: Number(faker.commerce.price({ dec: 0 })),
-          store: {
-            connect: {
-              id: store.id,
+      try {
+        const product = await prisma.product.create({
+          data: {
+            name: faker.commerce.productName(),
+            price: Number(faker.commerce.price({ dec: 0 })),
+            description: faker.commerce.productDescription(),
+            productImageSrc: faker.image.urlPicsumPhotos({
+              width: 400,
+              height: 400,
+            }),
+            store: {
+              connect: {
+                id: store.id,
+              },
             },
           },
-        },
-      });
-      await prisma.categoriesOnProducts.create({
-        data: {
-          product: {
-            connect: {
-              id: product.id,
+        });
+        await prisma.categoryOnProducts.create({
+          data: {
+            product: {
+              connect: {
+                id: product.id,
+              },
+            },
+            category: {
+              connect: {
+                id: Math.floor(Math.random() * (categoriesCount - 1) + 1),
+              },
             },
           },
-          category: {
-            connect: {
-              id: Math.floor(Math.random() * (categoriesCount - 1) + 1),
-            },
-          },
-        },
-      });
-      products.push(product);
+        });
+        products.push(product);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 }

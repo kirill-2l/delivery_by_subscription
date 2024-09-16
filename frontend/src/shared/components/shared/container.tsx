@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/utils/class-name';
 import React, { PropsWithChildren } from 'react';
 
 interface Props {
@@ -8,6 +8,8 @@ interface Props {
 
 export const Container = ({ className, children }: Props) => {
   return (
-    <div className={cn('mx-auto max-w-[1280px]', className)}>{children}</div>
+    <div className={cn('mx-auto max-w-7xl px-4 sm:px-6 md:px-8', className)}>
+      {children}
+    </div>
   );
 };

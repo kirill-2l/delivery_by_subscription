@@ -36,40 +36,44 @@ model User {
 }
 
 model Store {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  active    Boolean   @default(true)
-  products  Product[]
+  id                 Int       @id @default(autoincrement())
+  name               String    @unique
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  active             Boolean   @default(true)
+  products           Product[]
+  storeCoverImageSrc String?
 }
 
 model Product {
-  id          Int                    @id @default(autoincrement())
-  name        String?
-  price       Int
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime               @updatedAt
-  active      Boolean                @default(true)
-  productType ProductType            @default(REGULAR)
-  store       Store                  @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  storeId     Int
-  categories  CategoriesOnProducts[]
+  id              Int                 @id @default(autoincrement())
+  name            String?
+  price           Int
+  currencyName    CurrencyName        @default(USD)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  active          Boolean             @default(true)
+  productType     ProductType         @default(REGULAR)
+  store           Store               @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId         Int
+  productImageSrc String?
+  description     String?
+  category        CategoryOnProducts?
 
   @@map("products")
 }
 
 model Category {
-  id       Int                    @id @default(autoincrement())
-  name     String                 @unique
-  products CategoriesOnProducts[]
+  id       Int                  @id @default(autoincrement())
+  name     String               @unique
+  products CategoryOnProducts[]
 }
 
-model CategoriesOnProducts {
+model CategoryOnProducts {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId  Int
+  productId  Int       @unique
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId Int
   assignedAt DateTime  @default(now())
@@ -81,6 +85,11 @@ model CategoriesOnProducts {
 enum ProductType {
   REGULAR
   EXTRA
+}
+
+enum CurrencyName {
+  USD
+  EURO
 }
 
 enum UserRole {

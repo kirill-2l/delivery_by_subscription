@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/utils/class-name';
 import React, { FC, useState } from 'react';
 import { Container } from './container';
 import Link from 'next/link';
@@ -28,8 +28,8 @@ export const Header: FC<Props> = ({
   const { data: session } = useSession();
   const [openAuthModal, setOpenAuthModal] = useState(false);
   return (
-    <header className={cn('border-b', className)}>
-      <Container className='flex items-center justify-between py-8'>
+    <header className={cn('z-20 border-b bg-white', className)}>
+      <Container className='flex items-center justify-between py-4'>
         <Link href={AppRoutes.home}>
           <Logo />
         </Link>
