@@ -1,13 +1,8 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { Store } from "@prisma/client";
+import { Product, Store } from "@prisma/client";
 
-export interface StoreProductCategoryItem {
-  id: number;
-  name: string;
-  price: number;
-  productImageSrc?: string;
-}
+export interface StoreProductCategoryItem extends Omit<Product, "active" | "createdAt" | "updatedAt" | "storeId"> {}
 
 export interface StoreProductCategory {
   id: number;
@@ -76,6 +71,9 @@ export class StoreService {
             name: product.name,
             price: product.price,
             productImageSrc: product.productImageSrc,
+            currencyName: product.currencyName,
+            description: product.description,
+            productType: product.productType,
           });
         } else {
           res[categoryName] = {

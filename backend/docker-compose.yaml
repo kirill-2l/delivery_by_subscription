@@ -43,16 +43,7 @@ services:
 #    env_file:
 #      - .env
 #    depends_on:
-#      - postgres_local
-#  redis:
-#    image: "redis:alpine"
-#    ports:
-#      - "6379:6379"
-#    env_file:
-#      - .env
-#    volumes:
-#      - $PWD/redis-data:/var/lib/redis
-#      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+#      - postgres_local_dev
 #  mailhog:
 #    image: mailhog/mailhog
 #    logging:

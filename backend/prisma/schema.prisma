@@ -49,6 +49,7 @@ model Product {
   id              Int                 @id @default(autoincrement())
   name            String?
   price           Int
+  currencyName    CurrencyName        @default(USD)
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
   active          Boolean             @default(true)
@@ -56,6 +57,7 @@ model Product {
   store           Store               @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId         Int
   productImageSrc String?
+  description     String?
   category        CategoryOnProducts?
 
   @@map("products")
@@ -83,6 +85,11 @@ model CategoryOnProducts {
 enum ProductType {
   REGULAR
   EXTRA
+}
+
+enum CurrencyName {
+  USD
+  EURO
 }
 
 enum UserRole {
