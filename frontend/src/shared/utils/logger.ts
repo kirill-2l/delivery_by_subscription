@@ -1,15 +1,15 @@
-import winston from 'winston';
+import pino from 'pino';
 
-const { combine, timestamp, json } = winston.format;
-
-const logger = winston.createLogger({
-  level: 'info',
-  format: combine(timestamp(), json()),
-  transports: [
-    new winston.transports.File({
-      filename: 'app.log',
-    }),
-  ],
+const logger = pino({
+  browser: {
+    asObject: true,
+    serialize: true,
+  },
+  formatters: {
+    level(label, number) {
+      return { level: number };
+    },
+  },
 });
 
 export { logger };
