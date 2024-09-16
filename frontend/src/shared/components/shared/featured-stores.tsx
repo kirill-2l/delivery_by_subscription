@@ -1,14 +1,15 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { allStoresOptions } from '@/shared/hooks/stores';
 import Link from 'next/link';
 import { StoreCard } from '@/shared/components/shared/store-card';
 import { getStoreDetailRoute } from '@/shared/constants';
+import { Store } from '@/shared/services/stores';
 
-export const FeaturedStores = () => {
-  const { data: stores } = useQuery(allStoresOptions);
+interface FeaturedStoresProps {
+  stores: Store[];
+}
 
+export const FeaturedStores = ({ stores }: FeaturedStoresProps) => {
   return stores?.map((store) => (
     <Link key={store.id} href={getStoreDetailRoute(store.id)}>
       <StoreCard {...store} imgHeight={150}></StoreCard>

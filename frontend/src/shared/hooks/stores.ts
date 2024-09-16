@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import { Api } from '@/shared/services/api-client';
 
 export const allStoresOptions = queryOptions({
@@ -6,9 +6,8 @@ export const allStoresOptions = queryOptions({
   queryFn: Api.stores.getAll,
 });
 
-export const useStore = (id: number) => {
-  return useQuery({
+export const storeOptions = (id: number) =>
+  queryOptions({
     queryKey: ['storeDetail'],
     queryFn: () => Api.stores.getOne(id),
   });
-};

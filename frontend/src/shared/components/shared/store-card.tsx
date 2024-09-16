@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -8,9 +7,7 @@ import {
   CardTitle,
 } from '@/shared/components/ui';
 import Image from 'next/image';
-import { PriceText } from '@/shared/components/shared/price-text';
 import { Store } from '@/shared/services/stores';
-import { Star } from 'lucide-react';
 import { Rating } from '@/shared/components/shared/rating';
 
 const OfferType = {
@@ -33,6 +30,7 @@ export const StoreCard = (props: StoreCardProps) => {
     name,
     image,
     averageRating,
+    coverImageSrc,
   } = props;
   return (
     <Card>
@@ -47,7 +45,7 @@ export const StoreCard = (props: StoreCardProps) => {
           className='aspect-square w-full rounded-md object-cover'
           height={imgHeight}
           width={imgWidth}
-          src={image ?? '/placeholder.svg'}
+          src={coverImageSrc ?? '/placeholder.svg'}
         />
       </CardContent>
       {description && <CardDescription></CardDescription>}

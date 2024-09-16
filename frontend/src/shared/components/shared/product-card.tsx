@@ -1,52 +1,92 @@
+'use client';
+
 import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+  Separator,
 } from '@/shared/components/ui';
-import { PriceText } from '@/shared/components/shared/price-text';
 import Image from 'next/image';
+import { PlusIcon } from 'lucide-react';
+import { Product } from '@/shared/services/products';
+import { VisuallyHidden } from '@radix-ui/themes';
+import { currencyToSymbol } from '@/shared/utils';
 
-interface Props {
-  title: string;
-  description?: string;
-  image?: string;
-  price?: number;
-  imgHeight?: number;
-  imgWidth?: number;
+interface ProductCardProps {
+  data: Product;
 }
 
-export const ProductCard = (props: Props) => {
+export const ProductCard = (props: ProductCardProps) => {
   const {
-    image,
-    price,
-    title,
-    description,
-    imgHeight = 300,
-    imgWidth = imgHeight,
+    data: { name, price, productImageSrc, currencyName, description },
   } = props;
-  return (
+
+  const formattedPrice = `${price}${currencyToSymbol(currencyName)}`;
+
+  const ProductPreview = (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <Image
+          width={300}
+          height={300}
+          src={productImageSrc ?? ''}
+          alt={name}
+        />
       </CardHeader>
       <CardContent>
-        <Image
-          alt={title}
-          className='aspect-square w-full rounded-md object-cover'
-          height={imgHeight}
-          width={imgWidth}
-          src='/placeholder.svg'
-        />
+        <div className='text-xl font-semibold tracking-tight'>
+          {formattedPrice}
+        </div>
+        <h3 className=''>{name}</h3>
       </CardContent>
-      {description && <CardDescription></CardDescription>}
-      <CardFooter className='flex items-center justify-between gap-4'>
-        <PriceText price={100} currency={'$'} />
-        <Button>Select</Button>
+      <CardFooter>
+        <Button className='w-full'>
+          <PlusIcon /> Add
+        </Button>
       </CardFooter>
     </Card>
+  );
+
+  const ProductDetail = (
+    <div>
+      <VisuallyHidden>
+        <DialogTitle>{name}</DialogTitle>
+      </VisuallyHidden>
+      <div className='flex gap-16'>
+        <Image
+          className='rounded-3xl'
+          width={400}
+          height={400}
+          src={productImageSrc ?? ''}
+          alt={name}
+        />
+
+        <div className='flex flex-col gap-4'>
+          <div className='text-2xl font-extrabold'>{name}</div>
+          <div className='text-2xl font-bold'>{formattedPrice}</div>
+          <Button>
+            <PlusIcon /> Add
+          </Button>
+        </div>
+      </div>
+      <Separator className='my-4' />
+      {description && <DialogDescription>{description}</DialogDescription>}
+    </div>
+  );
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{ProductPreview}</DialogTrigger>
+      <DialogContent className={'w-[1200px] max-w-[1200px] p-10'}>
+        {ProductDetail}
+      </DialogContent>
+    </Dialog>
   );
 };

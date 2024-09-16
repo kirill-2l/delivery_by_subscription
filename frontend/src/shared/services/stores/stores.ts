@@ -1,6 +1,7 @@
 'use server';
 
 import { coreHttpClientInstance } from '../http-client';
+import { Product } from '@/shared/services/products';
 
 const OfferType = {
   freeDelivery: 'freeDelivery',
@@ -8,15 +9,24 @@ const OfferType = {
   mealAsGift: 'mealAsGift',
 } as const;
 
+export interface StoreProductCategory {
+  id: number;
+  name: string;
+  items: Product[];
+}
+
+export interface StoreWithProductCategories
+  extends Pick<Store, 'name' | 'id' | 'storeCoverImageSrc'> {
+  categories: StoreProductCategory[];
+}
+
 export interface Store {
   id: number;
   name: string;
-  description?: string;
-  image?: string;
-  imgHeight?: number;
-  imgWidth?: number;
-  offerType?: typeof OfferType;
-  averageRating?: number;
+  // description?: string;
+  // offerType?: typeof OfferType;
+  // averageRating?: number;
+  storeCoverImageSrc?: string;
 }
 
 const ENDPOINT = 'stores';
@@ -26,5 +36,9 @@ export const getAll = async () => {
 };
 
 export const getOne = async (id: number) => {
-  return (await coreHttpClientInstance.get<Store>(`${ENDPOINT}/${id}`)).json();
+  return (
+    await coreHttpClientInstance.get<StoreWithProductCategories>(
+      `${ENDPOINT}/${id}`
+    )
+  ).json();
 };
