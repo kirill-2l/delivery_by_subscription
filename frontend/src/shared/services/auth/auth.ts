@@ -39,7 +39,7 @@ export const signup = async (payload: UserCredentials) => {
 
 export const refresh = async (accessToken: string) => {
   return await authHttpClient
-    .post('/auth/refresh', {
+    .post<Tokens>('/auth/refresh', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

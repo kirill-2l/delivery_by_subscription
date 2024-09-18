@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/shared/components/ui';
 import { AuthModal } from '@/shared/components/shared/modals';
 import { useSession } from 'next-auth/react';
-import { UserProfile } from '@/shared/components/shared';
+import { CartButton, UserProfile } from '@/shared/components/shared';
 import { Logo } from '@/shared/components/shared/logo';
 import { AppRoutes } from '@/shared/constants';
 
@@ -33,16 +33,18 @@ export const Header: FC<Props> = ({
         <Link href={AppRoutes.home}>
           <Logo />
         </Link>
-
-        <AuthModal
-          open={openAuthModal}
-          onClose={() => setOpenAuthModal(false)}
-        />
-        {session ? (
-          <UserProfile user={session.user} />
-        ) : (
-          <Button onClick={() => setOpenAuthModal(true)}>Sign in</Button>
-        )}
+        <div className='flex items-center gap-2'>
+          <CartButton />
+          <AuthModal
+            open={openAuthModal}
+            onClose={() => setOpenAuthModal(false)}
+          />
+          {session ? (
+            <UserProfile user={session.user} />
+          ) : (
+            <Button onClick={() => setOpenAuthModal(true)}>Sign in</Button>
+          )}
+        </div>
       </Container>
     </header>
   );

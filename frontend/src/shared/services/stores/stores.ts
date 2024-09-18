@@ -23,9 +23,9 @@ export interface StoreWithProductCategories
 export interface Store {
   id: number;
   name: string;
-  // description?: string;
-  // offerType?: typeof OfferType;
-  // averageRating?: number;
+  description?: string;
+  offerType?: typeof OfferType;
+  averageRating?: number;
   storeCoverImageSrc?: string;
 }
 

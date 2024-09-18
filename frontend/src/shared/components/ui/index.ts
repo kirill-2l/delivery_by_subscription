@@ -8,3 +8,4 @@ export * from './label';
 export * from './card';
 export * from './separator';
 export * from './title';
+export * from './sheet';

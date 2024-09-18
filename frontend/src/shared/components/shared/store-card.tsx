@@ -17,7 +17,6 @@ const OfferType = {
 } as const;
 
 interface StoreCardProps extends Store {
-  image?: string;
   imgHeight?: number;
   imgWidth?: number;
 }
@@ -28,9 +27,8 @@ export const StoreCard = (props: StoreCardProps) => {
     imgHeight = 300,
     imgWidth = imgHeight,
     name,
-    image,
     averageRating,
-    coverImageSrc,
+    storeCoverImageSrc,
   } = props;
   return (
     <Card>
@@ -45,7 +43,7 @@ export const StoreCard = (props: StoreCardProps) => {
           className='aspect-square w-full rounded-md object-cover'
           height={imgHeight}
           width={imgWidth}
-          src={coverImageSrc ?? '/placeholder.svg'}
+          src={storeCoverImageSrc ?? '/placeholder.svg'}
         />
       </CardContent>
       {description && <CardDescription></CardDescription>}

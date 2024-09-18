@@ -39,6 +39,7 @@ export const authOptions: AuthOptions = {
     newUser: undefined,
   },
   callbacks: {
+    // @ts-ignore
     async jwt({ token, user }) {
       logger.info('jwt', { silent: IS_LOGGER_SILENT });
       try {
