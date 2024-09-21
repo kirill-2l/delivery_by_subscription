@@ -1,7 +1,7 @@
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { UserService } from "../../user/user.service";
 
 @Injectable()
@@ -17,8 +17,9 @@ export class AtStrategy extends PassportStrategy(Strategy, "jwt") {
   }
 
   async validate({ sub }: { sub: number }) {
-    const { hash, hashedRt, active, createdAt, updatedAt, lastLoginAt, ...rest } = await this.userService.findById(sub);
-
+    const user = await this.userService.findById(sub);
+    if (!user) throw new ForbiddenException("User not found");
+    const { hash, hashedRt, active, createdAt, updatedAt, lastLoginAt, ...rest } = user;
     return rest;
   }
 }

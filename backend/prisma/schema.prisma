@@ -32,6 +32,7 @@ model User {
   hashedRt    String?
   // store       Store?
   // categories  Category[]
+  Cart        Cart?
 
   @@map("users")
 }
@@ -60,6 +61,7 @@ model Product {
   productImageSrc String?
   description     String?
   category        CategoryOnProducts?
+  cartItem        CartItem[]
 
   @@map("products")
 }
@@ -81,6 +83,27 @@ model CategoryOnProducts {
 
   @@id([productId, categoryId])
   @@map("productCategories")
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    Int        @unique
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  cartId    Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int     @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ProductType {
