@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { ProductId } from "./types";
 
 @Injectable()
 export class ProductService {
@@ -7,5 +8,13 @@ export class ProductService {
 
   getAll() {
     return this.prisma.product.findMany();
+  }
+
+  findById(productId: ProductId) {
+    return this.prisma.product.findFirst({
+      where: {
+        id: productId,
+      },
+    });
   }
 }

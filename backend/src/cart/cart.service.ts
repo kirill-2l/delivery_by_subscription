@@ -5,6 +5,9 @@ import { Cart, CartItem, Category, Product } from "@prisma/client";
 import { DeleteSingleProductDto } from "./dto/delete-single-product.dto";
 import { UserID } from "../user/types";
 import { DeleteCartItemDto } from "./dto/delete-cart-item.dto";
+import { UuidService } from "../common/uuid.service";
+import { UserService } from "../user/user.service";
+import { ProductService } from "../product/product.service";
 
 type ProductWithCategory = Product & {
   category: {
@@ -20,14 +23,36 @@ type CartWithItems = Cart & {
   items: CartItemWithProductAndCategory[];
 };
 
+const CART_PRISMA_INCLUDE = {
+  items: {
+    include: {
+      product: {
+        include: {
+          category: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 @Injectable()
 export class CartService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly uuid: UuidService,
+    private readonly userService: UserService,
+    private readonly productService: ProductService,
+  ) {}
 
   private mapCartItemProduct(items: CartItemWithProductAndCategory[]) {
     return items.map(item => {
       return {
-        ...item,
+        id: item.id,
+        quantity: item.quantity,
         product: {
           id: item.product.id,
           name: item.product.name,
@@ -46,82 +71,81 @@ export class CartService {
     return cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   }
 
-  private async getCart(userId: UserID) {
-    const cartInclude = {
-      items: {
-        include: {
-          product: {
-            include: {
-              category: {
-                include: {
-                  category: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    };
-
-    let cart = await this.prisma.cart.findFirst({
+  private async findOrCreateCart(userId?: UserID, token?: string) {
+    const cart = await this.prisma.cart.findFirst({
       where: {
-        userId,
+        OR: [
+          {
+            token,
+          },
+          { user: { id: userId } },
+        ],
       },
-      include: cartInclude,
+      include: CART_PRISMA_INCLUDE,
     });
 
     if (!cart) {
-      cart = await this.prisma.cart.create({
+      const user = userId ? await this.userService.findById(userId) : null;
+
+      if (!token) {
+        token = this.uuid.generateUuid();
+      }
+
+      if (user) {
+        return this.prisma.cart.create({
+          data: {
+            user: {
+              connect: {
+                id: user?.id,
+              },
+            },
+            token,
+            items: {},
+          },
+          include: CART_PRISMA_INCLUDE,
+        });
+      }
+      return this.prisma.cart.create({
         data: {
-          totalAmount: 0,
-          userId,
+          token,
+          items: {},
         },
-        include: cartInclude,
+        include: CART_PRISMA_INCLUDE,
       });
     }
-
     return cart;
   }
 
   private async formatCart(cart: CartWithItems) {
     return {
+      token: cart.token,
       id: cart.id,
       items: this.mapCartItemProduct(cart.items),
       totalAmount: this.calcTotalAmount(cart.items),
     };
   }
 
-  async getUserCart(userId: UserID) {
-    const cart = await this.getCart(userId);
-    return {
-      id: cart.id,
-      items: this.mapCartItemProduct(cart.items),
-      totalAmount: this.calcTotalAmount(cart.items),
-    };
+  async getUserCart(userId?: UserID, token?: string) {
+    return this.formatCart(await this.findOrCreateCart(userId, token));
   }
 
-  async addProduct(userId: number, { productId }: CreateProductDto) {
-    const product = await this.prisma.product.findUnique({
-      where: {
-        id: productId,
-      },
-    });
+  async addProduct(userId: number, { productId }: CreateProductDto, token) {
+    const product = await this.productService.findById(productId);
 
     if (!product) throw new ForbiddenException("Product not found");
 
-    const currentCart = await this.getCart(userId);
-
-    const findCartItem = await this.prisma.cartItem.findFirst({
+    const currentCart = await this.findOrCreateCart(userId, token);
+    const cartItem = await this.prisma.cartItem.findFirst({
       where: {
         cartId: currentCart.id,
         productId,
       },
     });
 
-    if (findCartItem) {
+    if (cartItem) {
       await this.prisma.cartItem.update({
         where: {
-          id: findCartItem.id,
+          id: cartItem.id,
         },
         data: {
           quantity: {
@@ -139,13 +163,13 @@ export class CartService {
       });
     }
 
-    const cart = await this.getCart(userId);
+    const cart = await this.findOrCreateCart(userId, token);
 
     return this.formatCart(cart);
   }
 
-  async deleteCartItem(userId: UserID, { cartItemId }: DeleteCartItemDto) {
-    const cart = await this.getCart(userId);
+  async deleteCartItem({ cartItemId }: DeleteCartItemDto, userId: UserID, token?: string) {
+    const cart = await this.findOrCreateCart(userId, token);
     const cartItem = await this.prisma.cartItem.findFirst({
       where: {
         id: cartItemId,
@@ -177,12 +201,13 @@ export class CartService {
       });
     }
 
-    return this.formatCart(await this.getCart(userId));
+    return this.formatCart(await this.findOrCreateCart(userId, token));
   }
 
-  async deleteCartLine(userId: UserID, { productId }: DeleteSingleProductDto) {
-    const cart = await this.getCart(userId);
-    const cartItem = this.prisma.cartItem.findFirst({
+  async deleteCartLine({ productId }: DeleteSingleProductDto, userId: UserID, token: string) {
+    if (!userId && !token) throw new ForbiddenException("Not authorized and no cart token");
+    const cart = await this.findOrCreateCart(userId, token);
+    const cartItem = await this.prisma.cartItem.findFirst({
       where: {
         productId,
         cartId: cart.id,
@@ -198,6 +223,6 @@ export class CartService {
       },
     });
 
-    return this.formatCart(await this.getCart(userId));
+    return this.formatCart(await this.findOrCreateCart(userId, token));
   }
 }

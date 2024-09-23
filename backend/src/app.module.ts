@@ -11,6 +11,7 @@ import { AppLoggerMiddleware } from "./common/middleware/logger.middleware";
 import { ProductModule } from "./product/product.module";
 import { StoreModule } from "./store/store.module";
 import { CartModule } from "./cart/cart.module";
+import { CommonModule } from "./common/common.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CartModule } from "./cart/cart.module";
     ProductModule,
     StoreModule,
     CartModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [
