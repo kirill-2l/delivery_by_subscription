@@ -32,7 +32,7 @@ model User {
   hashedRt    String?
   // store       Store?
   // categories  Category[]
-  Cart        Cart?
+  CartService Cart?
 
   @@map("users")
 }
@@ -85,7 +85,7 @@ model CategoryOnProducts {
   @@map("productCategories")
 }
 
-model Cart {
+model CartService {
   id        Int        @id @default(autoincrement())
   user      User?      @relation(fields: [userId], references: [id])
   userId    Int?       @unique

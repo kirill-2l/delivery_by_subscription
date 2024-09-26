@@ -1,13 +1,10 @@
-import { Body, Controller, Delete, Get, Post, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Res } from "@nestjs/common";
 import { GetUser, Public } from "../auth/decorators";
 import { CartService } from "./cart.service";
-import { CreateProductDto } from "./dto/create-product.dto";
 import { DeleteSingleProductDto } from "./dto/delete-single-product.dto";
-import { DeleteCartItemDto } from "./dto/delete-cart-item.dto";
 import { Cookies } from "../common/decorators/cookies.decorator";
 import { Response } from "express";
-
-const cookieTokenKey = "cartToken" as const;
+import { COOKIE_TOKEN_KEY, setCookie } from "./utils/response.util";
 
 @Public()
 @Controller("cart")
@@ -15,36 +12,41 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Get()
-  async userCart(
-    @Res({ passthrough: true }) response: Response,
-    @Cookies(cookieTokenKey) token?: string,
-    @GetUser("id") userId?: number,
-  ) {
-    const res = await this.cartService.getUserCart(userId, token);
-    response.cookie(cookieTokenKey, res.token);
+  async getCart(@Res({ passthrough: true }) response: Response, @Cookies(COOKIE_TOKEN_KEY) token?: string) {
+    const res = await this.cartService.getUserCart(token);
+    setCookie(response, res.token);
     return res;
   }
 
-  @Post("/product")
-  addProduct(@GetUser("id") userId: number, @Body() dto: CreateProductDto, @Cookies(cookieTokenKey) token?: string) {
-    return this.cartService.addProduct(userId, dto, token);
+  @Post("/product/:productId")
+  async addProduct(
+    @Param("productId") productId: number,
+    @Res({ passthrough: true }) response: Response,
+    @Cookies(COOKIE_TOKEN_KEY) token?: string,
+  ) {
+    const res = await this.cartService.addProduct(productId, token);
+    setCookie(response, res.token);
+    return res;
   }
 
-  @Delete("/cart-item")
-  deleteCartItem(
-    @Body() dto: DeleteCartItemDto,
-    @GetUser("id") userId?: number,
-    @Cookies(cookieTokenKey) token?: string,
+  @Delete("/product/:productId")
+  async deleteSingleProduct(
+    @Res({ passthrough: true }) response: Response,
+    @Param("productId") productId: number,
+    @Cookies(COOKIE_TOKEN_KEY, ParseIntPipe) token: number,
   ) {
-    return this.cartService.deleteCartItem(dto, userId, token);
+    const res = await this.cartService.deleteCartItem(productId, token);
+    setCookie(response, res.token);
   }
 
   @Delete("/cart-line")
-  deleteSingleProduct(
+  async deleteCartItem(
+    @Res({ passthrough: true }) response: Response,
     @Body() dto: DeleteSingleProductDto,
     @GetUser("id") userId: number,
-    @Cookies(cookieTokenKey) token?: string,
+    @Cookies(COOKIE_TOKEN_KEY) token?: string,
   ) {
-    return this.cartService.deleteCartLine(dto, userId, token);
+    const res = await this.cartService.deleteCartLine(dto, userId, token);
+    setCookie(response, res.token);
   }
 }
