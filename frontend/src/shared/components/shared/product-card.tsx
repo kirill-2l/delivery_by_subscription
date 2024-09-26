@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Button,
   Card,
@@ -18,31 +16,23 @@ import { PlusIcon } from 'lucide-react';
 import { Product } from '@/shared/services/products';
 import { VisuallyHidden } from '@radix-ui/themes';
 import { currencyToSymbol } from '@/shared/utils';
-import { cartActions } from '@/shared/libs/features/cart/cart.slice';
-import { Api } from '@/shared/services/api-client';
-import { getToastError } from '@/shared/libs/utils/toast';
-import { useDispatch } from 'react-redux';
 
 interface ProductCardProps {
+  isOpen: boolean;
+  onSubmit: (product: Product) => void;
+  onClose: (open: boolean, product: Product) => void;
   data: Product;
 }
 
 export const ProductCard = (props: ProductCardProps) => {
-  const {
-    data: { name, price, productImageSrc, currencyName, description, id },
-  } = props;
+  const { data, isOpen, onClose, onSubmit } = props;
+  const { name, price, productImageSrc, currencyName, description, id } = data;
+
+  const handleOnClose = (open: boolean) => {
+    onClose(open, data);
+  };
 
   const formattedPrice = `${price}${currencyToSymbol(currencyName)}`;
-  const dispatch = useDispatch();
-
-  const handleAddProductClick = async () => {
-    try {
-      const result = await Api.cart.addProduct(id);
-      dispatch(cartActions.addProduct(result));
-    } catch (err) {
-      getToastError('Error adding product');
-    }
-  };
 
   const ProductPreview = (
     <Card>
@@ -85,7 +75,7 @@ export const ProductCard = (props: ProductCardProps) => {
         <div className='flex flex-col gap-4'>
           <div className='text-2xl font-extrabold'>{name}</div>
           <div className='text-2xl font-bold'>{formattedPrice}</div>
-          <Button onClick={handleAddProductClick}>
+          <Button onClick={() => onSubmit(data)}>
             <PlusIcon /> Add
           </Button>
         </div>
@@ -96,7 +86,7 @@ export const ProductCard = (props: ProductCardProps) => {
   );
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={handleOnClose}>
       <DialogTrigger asChild>{ProductPreview}</DialogTrigger>
       <DialogContent className={'w-[1200px] max-w-[1200px] p-10'}>
         {ProductDetail}
