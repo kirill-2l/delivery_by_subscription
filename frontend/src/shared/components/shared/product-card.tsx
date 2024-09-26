@@ -18,6 +18,10 @@ import { PlusIcon } from 'lucide-react';
 import { Product } from '@/shared/services/products';
 import { VisuallyHidden } from '@radix-ui/themes';
 import { currencyToSymbol } from '@/shared/utils';
+import { cartActions } from '@/shared/libs/features/cart/cart.slice';
+import { Api } from '@/shared/services/api-client';
+import { getToastError } from '@/shared/libs/utils/toast';
+import { useDispatch } from 'react-redux';
 
 interface ProductCardProps {
   data: Product;
@@ -25,10 +29,20 @@ interface ProductCardProps {
 
 export const ProductCard = (props: ProductCardProps) => {
   const {
-    data: { name, price, productImageSrc, currencyName, description },
+    data: { name, price, productImageSrc, currencyName, description, id },
   } = props;
 
   const formattedPrice = `${price}${currencyToSymbol(currencyName)}`;
+  const dispatch = useDispatch();
+
+  const handleAddProductClick = async () => {
+    try {
+      const result = await Api.cart.addProduct(id);
+      dispatch(cartActions.addProduct(result));
+    } catch (err) {
+      getToastError('Error adding product');
+    }
+  };
 
   const ProductPreview = (
     <Card>
@@ -71,7 +85,7 @@ export const ProductCard = (props: ProductCardProps) => {
         <div className='flex flex-col gap-4'>
           <div className='text-2xl font-extrabold'>{name}</div>
           <div className='text-2xl font-bold'>{formattedPrice}</div>
-          <Button>
+          <Button onClick={handleAddProductClick}>
             <PlusIcon /> Add
           </Button>
         </div>

@@ -2,12 +2,12 @@ import ky from 'ky';
 import { Session } from 'next-auth';
 
 let lastSession: Session | null = null;
-
 export const coreHttpClientInstance = ky.create({
-  prefixUrl: process.env.REACT_APP_SERVICE_BASE_URL,
+  prefixUrl: `${process.env.NEXT_PUBLIC_URL}api/`,
   headers: {
     'Content-Type': 'application/json',
   },
+  credentials: 'include',
   hooks: {
     beforeRequest: [
       (request) => {

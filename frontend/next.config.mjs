@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+/** @type {import("next").NextConfig} */
 const nextConfig = {
   logging: {
     fetches: {
@@ -8,9 +8,14 @@ const nextConfig = {
   images: {
     domains: ['picsum.photos'],
   },
-  // workaround to disable cache in dev mode
-  // ...(process.env.NODE_ENV !== 'production' && { cacheMaxMemorySize: 0,  }),
-  cacheMaxMemorySize: 0,
+  rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `http://localhost:3333/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
